@@ -19,7 +19,7 @@ public class WebSecurity {
                 .csrf(csrf -> csrf.disable())//cross site request
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // for H2
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/status").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .anyRequest().authenticated()
