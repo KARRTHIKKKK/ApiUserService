@@ -21,3 +21,6 @@ public class ApiUserServiceApplication
         return new BCryptPasswordEncoder();
     }
 }
+//H2-DB  http://localhost:8080/h2-console
+//Status http://localhost:8080/users/status
+// http://localhost:8040/userservice/users/status
