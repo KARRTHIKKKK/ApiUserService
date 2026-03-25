@@ -23,4 +23,4 @@ public class ApiUserServiceApplication
 }
 //H2-DB  http://localhost:8080/h2-console
 //Status http://localhost:8080/users/status
-// http://localhost:8040/userservice/users/status
+//Via ApiGateway http://localhost:8040/userservice/users/status
