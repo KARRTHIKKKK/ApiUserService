@@ -4,6 +4,8 @@ package com.mydemo.api.users.security;
 import java.io.IOException;
 import java.util.ArrayList;
 import com.mydemo.api.users.controller.model.LoginRequestModel;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,10 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter
-{
-    public AuthenticationFilter(AuthenticationManager authenticationManager)
-    {
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    public AuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
@@ -26,8 +26,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter
     public Authentication
     attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {
-        try
-        {
+        try {
             LoginRequestModel creds = new ObjectMapper()
                     .readValue(req.getInputStream(), LoginRequestModel.class);
 
@@ -36,10 +35,18 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter
                             creds.getEmail(),
                             creds.getPassword(),
                             new ArrayList<>()));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth)
+            throws IOException, ServletException
+    {
+
     }
 }
