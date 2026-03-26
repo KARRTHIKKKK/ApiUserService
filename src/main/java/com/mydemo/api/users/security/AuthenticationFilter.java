@@ -2,9 +2,17 @@ package com.mydemo.api.users.security;
 
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.stream.Collectors;
+
 import com.mydemo.api.users.controller.model.LoginRequestModel;
 import com.mydemo.api.users.service.UserService;
+import com.mydemo.api.users.shared.UserDto;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.springframework.core.env.Environment;
@@ -18,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import javax.crypto.SecretKey;
 
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -59,6 +69,25 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws IOException, ServletException
     {
         String userName=((User)auth.getPrincipal()).getUsername();
-        userService.getUserDetailsByEmail(userName);
+        UserDto userDetails =userService.getUserDetailsByEmail(userName);
+        String tokenSecret = env.getProperty("token.secret");
+        byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
+        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+
+        Instant now = Instant.now();
+
+        String token = Jwts.builder()
+                .claim("scope", auth.getAuthorities().stream()
+                        .map(authority -> authority.getAuthority())
+                        .collect(Collectors.toList()))
+                .subject(userDetails.getUserId())
+                .expiration(
+                        Date.from(now.plusMillis(Long.parseLong(env.getProperty("token.expiration_time")))))
+                .issuedAt(Date.from(now))
+                .signWith(secretKey)
+                .compact();
+
+        res.addHeader("token", token);
+        res.addHeader("userId", userDetails.getUserId());
     }
 }
