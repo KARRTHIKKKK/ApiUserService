@@ -12,7 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration  // Marks this class as a Spring configuration class
@@ -68,7 +67,7 @@ public class WebSecurity
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         )
                 // Add JWT Authorization filter — validates JWT token on every request
-                .addFilter(new AuthorizationFilter(authenticationManager, env))
+                .addFilter(new AuthenticationFilter(usersService,env,authenticationManager))
                 // Add custom Authentication filter — handles login and issues JWT token
                 .addFilter(authenticationFilter)
                 // Set the AuthenticationManager to be used by the filters
