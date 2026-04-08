@@ -71,7 +71,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String userName=((User)auth.getPrincipal()).getUsername();
         UserDto userDetails =userService.getUserDetailsByEmail(userName);
         String tokenSecret = env.getProperty("token.secret");
-        byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
+        byte[] secretKeyBytes = tokenSecret.getBytes();
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
         Instant now = Instant.now();

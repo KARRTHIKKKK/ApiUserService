@@ -67,7 +67,7 @@ public class WebSecurity
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         )
                 // Add JWT Authorization filter — validates JWT token on every request
-                .addFilter(new AuthenticationFilter(usersService,env,authenticationManager))
+                //.addFilter(new AuthenticationFilter(usersService,env,authenticationManager))
                 // Add custom Authentication filter — handles login and issues JWT token
                 .addFilter(authenticationFilter)
                 // Set the AuthenticationManager to be used by the filters
